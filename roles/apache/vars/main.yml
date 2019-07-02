@@ -1,0 +1,5 @@
+--- 
+web_products:
+  - {name: "jbcs-httpd24-2.4", package: "jbcs-httpd24-httpd-2.4.29-RHEL7-x86_64.zip",vendor: "redhat" , server_home: "{{ web_path }}/jbcs-2.4.29" , patches: []}  
+  - {name: "jbcs-httpd24-2.4-SP2", package: "jbcs-httpd24-httpd-2.4.29-RHEL7-x86_64.zip",vendor: "redhat" , server_home: "{{ web_path }}/jbcs-2.4.29" , patches: ["jbcs-httpd24-httpd-2.4.29-SP2-RHEL7-x86_64.zip"]}  
+  - {name: "httpd-2.4.38", package: "httpd-2.4.38.tar.gz", vendor: "opensouce" , server_home: "{{ web_path }}/apache-2.4.38", patches: []}   

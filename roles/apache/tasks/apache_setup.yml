@@ -1,0 +1,19 @@
+---
+- name: Generate jk.conf Config
+  template: src=jk.conf.j2 dest={{ selected_web.server_home }}/conf.d/jk.conf mode=0600 owner={{ username }} group={{ groupname }}  
+
+- name: Generate vhost.conf Config
+  template: src=vhost.conf.j2 dest={{ selected_web.server_home }}/conf.d/vhost.conf mode=0600 owner={{ username }} group={{ groupname }}  
+ 
+- name: Generate Workers.Properties Config
+  template: src=workers.properties.j2 dest={{ selected_web.server_home }}/conf.d/workers.properties mode=0600 owner={{ username }} group={{ groupname }}  
+ 
+#- name: Generate ssl.conf Config
+#  template: src=ssl.conf.j2 dest={{ selected_web.server_home }}/conf.d/ssl.conf mode=0600 owner={{ username }} group={{ groupname }}  
+
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: "{{ selected_web.server_home }}/conf/httpd.conf" 
+    line: "Include conf.d/*.conf"
+    state: present
+  when: web_product.find("apache") != -1 

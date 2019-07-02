@@ -1,0 +1,26 @@
+---
+# tasks file for user
+- name: Ensure group "{{ groupname }}" exists
+  group:
+    name: "{{ groupname }}"
+    gid: "{{ groupid }}"
+    state: present
+
+- name: Create User "{{ username }}" with "{{ groupname }}" access
+  user:
+    name: "{{ username }}"
+    uid: "{{ userid }}"
+    password: "{{ userpass | password_hash('sha512') }}"
+    group: "{{ groupname }}"
+    home: "{{ userhome }}"
+    shell: "{{ usershell }}" 
+#    groups: "{{ groupsname }}" append=yes
+
+- name: Create Document Root for "{{ username }}"
+  file:
+    path: "{{ userhome }}"
+    state: directory
+    mode: 0700
+    owner: "{{ username }}"
+    group: "{{ groupname }}"
+

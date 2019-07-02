@@ -1,0 +1,25 @@
+---
+#####################################
+## load varaibles for web ###########
+#####################################
+- name: Load varaibles for web
+  include_vars: "roles/apache/vars/main.yml"
+
+- name: Display all provider java
+  debug:
+    msg: "{{ vars['web_product'] }}"
+
+- name: Display selected web in 'host.ini [webservers:vars]'
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['web_products'] }}"
+    
+- name: Set Fact web Configuration
+  set_fact: 
+    selected_web:  "{{ hostvars[inventory_hostname]['web_products'] | selectattr('name', 'equalto', vars['web_product']) | first }}"
+    selected_web_name:  "{{ hostvars[inventory_hostname]['web_products'] | selectattr('name', 'equalto', vars['web_product']) | map(attribute='name') | first }}"
+    selected_web_file:  "{{ hostvars[inventory_hostname]['web_products'] | selectattr('name', 'equalto', vars['web_product']) | map(attribute='package') | first }}"
+    selected_web_patch:  "{{ hostvars[inventory_hostname]['web_products'] | selectattr('name', 'equalto', vars['web_product']) | map(attribute='patches') | first }}"
+   
+- name: Display web Configuration 
+  debug:
+    msg: "=== {{ selected_web_name }} {{ selected_web_file }} {{ selected_web_patch }}"

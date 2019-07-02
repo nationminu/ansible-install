@@ -1,0 +1,20 @@
+---  
+- name: Make Patch Script - 1
+  template: src=patch_server_start.sh.j2 dest={{ was_path }}/tmp/patch_server_start.sh mode=0700 owner={{ username }} group={{ groupname }}  
+
+- name: Make Patch Script - 2 
+  template: src=patch_server_stop.sh.j2 dest={{ was_path }}/tmp/patch_server_stop.sh mode=0700 owner={{ username }} group={{ groupname }}  
+
+- name: Make Patch Script - 3
+  template: src=patch_server.sh.j2 dest={{ was_path }}/tmp/patch_server.sh mode=0700 owner={{ username }} group={{ groupname }}  
+
+- name: Run Temporaray Instance And Patch
+  shell: |
+    source /etc/profile.d/java.sh 
+    /bin/nohup {{ was_path }}/tmp/patch_server_start.sh >> {{ was_path }}/tmp/patch.out
+    {{ was_path }}/tmp/patch_server.sh {{ was_path }}/tmp/{{ item }} >> {{ was_path }}/tmp/patch.out
+    {{ was_path }}/tmp/patch_server_stop.sh
+  become: yes
+  become_user: "{{ username }}"
+  with_items:
+    - "{{ selected_was_patch }}"

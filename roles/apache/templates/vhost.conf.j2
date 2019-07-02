@@ -1,0 +1,37 @@
+##############################################################
+# virtualhost : www.example.conf 
+##############################################################
+  
+<VirtualHost *:80>
+    ServerName  example.com 
+
+    DocumentRoot "{{ app_path }}"
+    ServerAdmin  admin@example.com 
+
+    SetEnvIf Request_URI "\.(gif)|(GIF)|(jpg)|(JPG)|(png)|(PNG)|(js)$|(css)|(swf)|(ico)$" static_log
+
+    CustomLog    "|{{ selected_web.server_home }}/sbin/rotatelogs {{ log_path }}/access.log.%Y%m%d 86400 +540" combined env=!static_log
+    CustomLog    "|{{ selected_web.server_home }}/sbin/rotatelogs {{ log_path }}/tatic.log.%Y%m%d 86400 +540" common env=static_log
+    ErrorLog     "|{{ selected_web.server_home }}/sbin/rotatelogs {{ log_path }}/error.log.%Y%m%d 86400 +540"
+
+    JkMount /*.do	wlb
+    JkMount /*.jsp	wlb
+    JkMount /*.json	wlb
+    JkMount /*.servlet	wlb
+    JkMount /servlets/*	wlb
+    JkMount /session/*	wlb
+
+</VirtualHost>
+
+<Directory "{{ app_path }}">
+    Options FollowSymLinks
+    AllowOverride None
+    Require all granted
+    <Limit GET POST OPTIONS>
+        Require all granted 
+    </Limit>
+    <LimitExcept GET POST OPTIONS>
+        Require all denied
+    </LimitExcept>
+</Directory>
+

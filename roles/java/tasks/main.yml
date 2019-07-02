@@ -1,0 +1,32 @@
+---
+# tasks file for java    
+- name: "Yum Openjdk '{{ selected_java.package }}'"
+  yum: name={{ item }} state=latest
+  with_items:
+    - "{{ selected_java.package }}"
+    - "{{ selected_java.package }}-devel"
+  when: java_product.find("openjdk") != -1 and java_exist.stat.exists == False
+
+- name: "Upload Oraclejdk"
+  file:
+    path: "{{ selected_java.java_home }}"
+    state: directory
+  when: java_product.find("oraclejdk") != -1 and java_exist.stat.exists == False
+
+- name: "UnArchive Oraclejdk"
+  unarchive:
+    src: "{{ selected_java.package }}"
+    dest: "{{ java_path }}"
+  when: java_product.find("oraclejdk") != -1 and java_exist.stat.exists == False
+
+- name: "Set JAVA_HOME"
+  shell:
+    cmd: |
+      cat > /etc/profile.d/java.sh << EOF
+      # /etc/profile.d/lang.sh
+      JAVA_HOME={{ selected_java.java_home }}
+      PATH=\$JAVA_HOME/bin:\$PATH
+
+      export JAVA_HOME PATH
+  when: java_exist.stat.exists == False
+

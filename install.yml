@@ -1,0 +1,31 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- hosts: localhost
+  gather_facts: false
+  become: no
+  tasks:
+    - name: "Check ansible version !=2.7.0"
+      assert:
+        msg: "Ansible V2.7.0 can't be used until: https://github.com/ansible/ansible/issues/46600 is fixed"
+        that:
+          - ansible_version.string is version("2.7.0", "!=")
+          - ansible_version.string is version("2.6.0", ">=")
+      tags:
+        - check
+  vars:
+    ansible_connection: local
+
+- hosts: all 
+  gather_facts: false
+  tasks:
+    - ping:
+
+- hosts: all  
+  roles:
+    # - user 
+    # - os
+    - facts
+    # - java
+    # - jboss
+    - apache

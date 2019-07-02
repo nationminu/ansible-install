@@ -1,0 +1,31 @@
+---
+#####################################
+## load varaibles for java ##########
+#####################################
+- name: Load varaibles for java
+  include_vars: "roles/java/vars/main.yml"
+ 
+- name: Display all provider java
+  debug:
+    msg: "{{ vars['java_product'] }}"
+
+- name: Display selected java in 'host.ini [wasservers:vars]'
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['java_products'] }}"
+
+- name: Set Fact java Configuration
+  set_fact: 
+    selected_java:  "{{ hostvars[inventory_hostname]['java_products'] | selectattr('name', 'equalto', vars['java_product']) | first }}"
+    selected_java_name:  "{{ hostvars[inventory_hostname]['java_products'] | selectattr('name', 'equalto', vars['java_product']) | map(attribute='name') | first }}"
+    selected_java_package:  "{{ hostvars[inventory_hostname]['java_products'] | selectattr('name', 'equalto', vars['java_product']) | map(attribute='package') | first }}"
+    selected_java_home:  "{{ hostvars[inventory_hostname]['java_products'] | selectattr('name', 'equalto', vars['java_product']) | map(attribute='java_home') | first }}"
+     
+- name: check version
+  stat: 
+    path: "{{ selected_java_home }}"
+  register: java_exist
+
+- name: Display java Configuration 
+  debug:
+    msg: "Java Information :: {{ selected_java_name }} {{ selected_java_package }} {{ selected_java_home }} {{ java_exist.stat.exists }}"
+ 

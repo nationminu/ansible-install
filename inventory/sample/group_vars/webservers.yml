@@ -1,0 +1,26 @@
+--- 
+http_vhosts:
+  - {
+    name: "front",
+    domain: "www.rockplace.co.kr", alias: "localhost front.rockplace.co.kr", 
+    document_root: "/app/web/apps/front"  
+    }   
+  - {
+    name: "crm",
+    domain: "crm.rockplace.co.kr", alias: "crm.rockplace.co.kr", 
+    document_root: "/app/web/apps/crm"  
+    }   
+
+https_vhosts:
+  - {
+    name: "front",
+    domain: "www.rockplace.co.kr", alias: "locahost front.rockplace.co.kr", 
+    document_root: "/app/web/apps/front" ,
+    ca_file: "/app/web/ssl/ca.perm", key_file: "/app/web/ssl/key.perm", cert_file: "/app/web/ssl/ca_cert.perm" 
+    }       
+  - {
+    name: "crm",
+    domain: "crm.rockplace.co.kr", alias: "crm.rockplace.co.kr", 
+    document_root: "/app/web/apps/crm",  
+    ca_file: "/app/web/ssl/ca.perm", key_file: "/app/web/ssl/key.perm", cert_file: "/app/web/ssl/ca_cert.perm" 
+    }           

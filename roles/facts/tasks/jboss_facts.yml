@@ -1,0 +1,25 @@
+---
+#####################################
+## load varaibles for was ###########
+#####################################
+- name: Load varaibles for was
+  include_vars: "roles/jboss/vars/main.yml"
+
+- name: Display all provider java
+  debug:
+    msg: "{{ vars['was_product'] }}"
+
+- name: Display selected was in 'host.ini [wasservers:vars]'
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['was_products'] }}"
+    
+- name: Set Fact was Configuration
+  set_fact: 
+    selected_was:  "{{ hostvars[inventory_hostname]['was_products'] | selectattr('name', 'equalto', vars['was_product']) | first }}"
+    selected_was_name:  "{{ hostvars[inventory_hostname]['was_products'] | selectattr('name', 'equalto', vars['was_product']) | map(attribute='name') | first }}"
+    selected_was_file:  "{{ hostvars[inventory_hostname]['was_products'] | selectattr('name', 'equalto', vars['was_product']) | map(attribute='package') | first }}"
+    selected_was_patch:  "{{ hostvars[inventory_hostname]['was_products'] | selectattr('name', 'equalto', vars['was_product']) | map(attribute='patches') | first }}"
+   
+- name: Display was Configuration 
+  debug:
+    msg: "=== {{ selected_was_name }} {{ selected_was_file }} {{ selected_was_patch }}"

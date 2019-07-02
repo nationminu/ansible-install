@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+version=`{{ selected_was.server_home }}/bin/standalone.sh --version | grep EAP | awk '{gsub(".GA","",$3);print "jboss-eap-"$3}'`
+patch_version=`echo $1 | cut -d'/' -f 4`
+
+minor_version=`echo $version | cut -d'.' -f 3 | awk '{gsub("-patch","",$1); print $1}'`
+minor_patch_version=`echo $patch_version | cut -d'.' -f 3 | awk '{gsub("-patch","",$1); print $1}'`
+
+if [ ${minor_version} -lt ${minor_patch_version} ]; then
+    echo "=========== Patch ${version} to ${patch_version}"
+    {{ selected_was.server_home }}/bin/jboss-cli.sh --command="patch apply --override-all $1"
+else 
+    echo "=========== Skip ${patch_version} , Now ${version}"
+fi

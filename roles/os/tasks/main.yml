@@ -1,0 +1,55 @@
+---
+# tasks file for os
+- name: "set Fact Os ansible_distribution"
+  set_fact:
+    redhat: true
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux')
+
+- name: "fail the play if the os distribution did not support"
+  fail:
+    msg: "{{ ansible_distribution }} is not supported"
+  when: redhat is not defined
+
+- name: yum install Essential utils for all servers
+  yum: name={{ item }} state=latest
+  with_items:
+    - unzip
+    - curl
+
+- name: yum install Essential utils for webservers
+  yum: name={{ item }} state=latest
+  with_items:
+    - mailcap
+  when: '"webservers" in group_names' 
+
+- name: Set kernel param in /etc/sysctl.conf
+  sysctl: name={{ item.pname }} value={{ item.pvalue }} state=present sysctl_file=/etc/sysctl.d/99-sysctl.conf sysctl_set=yes reload=yes
+  with_items:
+    - { pname: 'net.ipv4.tcp_keepalive_time', pvalue: '30' }
+    - { pname: 'net.ipv4.ip_local_port_range', pvalue: '10240 65000' }
+    - { pname: 'net.ipv4.tcp_fin_timeout', pvalue: '10' }
+    - { pname: 'net.core.netdev_max_backlog', pvalue: '2500' }
+    - { pname: 'net.ipv4.tcp_retries1', pvalue: '2' }
+    - { pname: 'net.ipv4.tcp_retries2', pvalue: '3' }
+    - { pname: 'net.ipv4.tcp_window_scaling', pvalue: '1' }
+    - { pname: 'net.core.rmem_max', pvalue: '56777216' }
+    - { pname: 'net.core.rmem_default', pvalue: '16777216' }
+    - { pname: 'net.core.wmem_max', pvalue: '56777216' }
+    - { pname: 'net.core.wmem_default', pvalue: '16777216' }
+
+- name: Set ulimit in /etc/security/limits.conf
+  pam_limits: domain={{ username }} limit_type={{ item.ptype }} limit_item={{ item.pname }} value={{ item.pvalue }}
+  with_items:
+    - { pname: 'nofile', pvalue: '65000' ,ptype: 'soft'}
+    - { pname: 'nofile', pvalue: '65000' ,ptype: 'hard'}
+    - { pname: 'nproc', pvalue: '16000' ,ptype: 'soft'}
+    - { pname: 'nproc', pvalue: '16000' ,ptype: 'hard'}
+    
+- name: Add IP address of all hosts to all hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '.*{{ item }}$'
+    line: "{{ hostvars[item].ansible_host }} {{ item }} {{ hostvars[item].ansible_hostname }}"
+    state: present
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.all }}"

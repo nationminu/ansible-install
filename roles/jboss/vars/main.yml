@@ -1,0 +1,8 @@
+--- 
+was_products:
+  - {name: "jboss-eap-6.3.3",  package: "jboss-eap-6.3.0.zip", vendor: "redhat", server_home: "{{ was_path }}/jboss-eap-6.3" , patches: ["jboss-eap-6.3.3-patch.zip"]} 
+  - {name: "jboss-eap-6.4.11", package: "jboss-eap-6.4.0.zip", vendor: "redhat", server_home: "{{ was_path }}/jboss-eap-6.4" , patches: ["jboss-eap-6.4.9-patch.zip","jboss-eap-6.4.11-patch.zip"]} 
+  - {name: "jboss-eap-6.4.22", package: "jboss-eap-6.4.0.zip", vendor: "redhat", server_home: "{{ was_path }}/jboss-eap-6.4" , patches: ["jboss-eap-6.4.9-patch.zip","jboss-eap-6.4.19-patch.zip","jboss-eap-6.4.22-patch.zip"]} 
+  - {name: "jboss-eap-7.1.4",  package: "jboss-eap-7.1.0.zip", vendor: "redhat", server_home: "{{ was_path }}/jboss-eap-7.1" , patches: ["jboss-eap-7.1.4-patch.zip"]} 
+  - {name: "jboss-eap-7.2.2",  package: "jboss-eap-7.2.0.zip", vendor: "redhat", server_home: "{{ was_path }}/jboss-eap-7.2" , patches: ["jboss-eap-7.2.2-patch.zip"]} 
+  - {name: "apache-tomcat-8.5", package: "apache-tomcat-8.5.39.tar.gz", vendor: "opensouce", server_home: "{{ was_path }}/apache-tomcat-8.5.39" ,  patches: []} 

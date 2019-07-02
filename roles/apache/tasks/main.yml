@@ -1,0 +1,7 @@
+--- 
+# tasks file for apache 
+- include_tasks: apache_install.yml
+  when: '"webservers" in group_names' 
+
+- include_tasks: apache_setup.yml
+  when: '"webservers" in group_names' 

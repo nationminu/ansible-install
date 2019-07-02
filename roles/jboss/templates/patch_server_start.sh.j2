@@ -1,0 +1,11 @@
+#!/usr/bin/env bash 
+
+PID=`ps -ef | grep java | grep jboss |grep "PATCH_ENGINE"| awk '{print $2}'`
+
+if [ e$PID != "e" ]
+then
+    echo "JBoss SERVER - $SERVER_NAME is already RUNNING..."
+    exit;
+fi
+
+{{ selected_was.server_home }}/bin/standalone.sh -Dtype=PATCH_ENGINE &

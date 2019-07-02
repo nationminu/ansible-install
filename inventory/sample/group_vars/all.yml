@@ -1,0 +1,18 @@
+---
+locale: UTF-8
+locale_lang: ko_KR
+
+webservers : {
+  "webserver1": 
+  {
+     "virtualhost": [
+     { "name": "front","domain": "www.rockplace.co.kr","alias": "localhost 127.0.0.1", "document_root": "/app/web/apps/front" }, 
+     { "name": "admin","domain": "admin.rockplace.co.kr","alias": "localhost 127.0.0.1", "document_root": "/app/web/apps/admin" }
+  ]},
+  "webserver2": 
+  {
+     "virtualhost": [
+     { "name": "front","domain": "www.rockplace.co.kr","alias": "localhost 127.0.0.1", "document_root": "/app/web/apps/front" }, 
+     { "name": "admin","domain": "admin.rockplace.co.kr","alias": "localhost 127.0.0.1", "document_root": "/app/web/apps/admin" }
+  ]}
+}

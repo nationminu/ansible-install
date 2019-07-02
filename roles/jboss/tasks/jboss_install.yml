@@ -1,0 +1,73 @@
+---
+- name: Create '{{ item }}' for wasserver directory
+  file:
+    path: "{{ item }}"
+    state: directory  
+    owner: "{{ username }}"
+    group: "{{ groupname }}"
+    mode: 0700
+  with_items:
+    - "{{ was_path }}" 
+    - "{{ log_path }}" 
+    - "{{ dom_path }}"  
+    - "{{ app_path }}" 
+ 
+- name: Exist check EAP Engine
+  stat: 
+    path: "{{ selected_was.server_home }}"
+  register: was_exist 
+
+- name: "unArchive Packages" 
+  unarchive:
+    src: "{{ selected_was.package }}"
+    dest: "{{ was_path }}"  
+    owner: "{{ username }}"
+    group: "{{ groupname }}"
+  when: was_exist.stat.exists == False
+
+- name: copy 'wasserver' Patch Packages
+  copy:
+    src: "{{ item }}"
+    dest: "{{ was_path }}/tmp/"
+    owner: "{{ username }}"
+    group: "{{ groupname }}"
+    mode: 0600
+  with_items:
+    - "{{ selected_was.patches }}" 
+
+- name: Make SERVER Instance
+#  command: cp -r {{ selected_was.server_home }}/standalone {{ dom_path }}/{{ item.server_name }} 
+#  copy: src={{ selected_was.server_home }}/standalone dest={{ dom_path }}/{{ item.server_name }} remote_src=yes directory_mode=yes
+#   synchronize:
+#     src: "{{ selected_was.server_home }}/standalone"
+#     dest: "{{ dom_path }}/{{ item.server_name }}"
+#   delegate_to: "{{ inventory_hostname }}"
+  shell: |
+    [ ! -d {{ dom_path }}/{{ item.server_name }} ] && cp -r {{ selected_was.server_home }}/standalone {{ dom_path }}/{{ item.server_name }}  
+    [ -d {{ dom_path }}/{{ item.server_name }} ] && tar -zcvf {{ was_path }}/tmp/{{ item.server_name }}.`date +%Y%m%d_%H%M%S`.tar.gz {{ dom_path }}/{{ item.server_name }}
+  with_items:
+    - "{{ hostvars[inventory_hostname].instances }}" 
+  ignore_errors: yes 
+ 
+- name: Make SERVER Instance Executor Script 
+  copy: src="bin" dest={{ dom_path }}/{{ item.server_name }}/ mode=0700 owner={{ username }} group={{ groupname }} 
+  with_items:
+    - "{{ hostvars[inventory_hostname].instances }}" 
+
+- name: Make SERVER Instance Enviroment Script  
+  template: src=env.sh.j2 dest={{ dom_path }}/{{ item.server_name }}/bin/env.sh mode=0700 owner={{ username }} group={{ groupname }} 
+  with_items:
+    - "{{ hostvars[inventory_hostname].instances }}"    
+ 
+- name: Make SERVER Instance CLI Script  
+  template: src=tune.cli.j2 dest={{ dom_path }}/{{ item.server_name }}/bin/cli/tune.cli mode=0700 owner={{ username }} group={{ groupname }} 
+  with_items:
+    - "{{ hostvars[inventory_hostname].instances }}"    
+
+- name: Recursively change ownership of a directory
+  file:
+    path: "{{ was_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ username }}"
+    group: "{{ groupname }}"

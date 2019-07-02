@@ -1,0 +1,10 @@
+---
+# tasks file for facts 
+- include_tasks: java_facts.yml
+  when: '"wasservers" in {{ group_names }}'
+
+- include_tasks: jboss_facts.yml
+  when: '"wasservers" in {{ group_names }}'
+
+- include_tasks: apache_facts.yml
+  when: '"webservers" in {{ group_names }}'

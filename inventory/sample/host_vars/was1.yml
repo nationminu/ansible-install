@@ -1,0 +1,44 @@
+---  
+instances:
+    - server_name: front11
+      configuration: standalone-ha.xml
+      bind_addr : "{{ ansible_host }}"
+      port_offset: 100
+      mgmt_addr : "{{ ansible_host }}" # 127.0.0.1 
+      java_heap_min: 1024m
+      java_heap_max: 1024m
+      java_perm_min: 128m
+      java_perm_max: 1024m
+      multicast_addr: "231.0.1.1"
+      multicast_port: "55200"
+      jms_multicast_addr: "232.0.1.1"
+      modcluster_multicast_addr: "233.0.1.1" 
+      jgroups_stack: udp
+      jgroups_members:
+        - addr: 192.168.56.202
+          port: 7900 
+        - addr: 192.168.56.203
+          port: 7900 
+        - addr: 192.168.56.203
+          port: 7900  
+    - server_name: front12
+      configuration: standalone-ha.xml
+      bind_addr : "{{ ansible_host }}"
+      port_offset: 200
+      mgmt_addr : "{{ ansible_host }}" # 127.0.0.1 
+      java_heap_min: 1024m
+      java_heap_max: 1024m
+      java_perm_min: 128m
+      java_perm_max: 1024m
+      multicast_addr: "231.0.1.2"
+      multicast_port: "55200"
+      jms_multicast_addr: "232.0.1.2"
+      modcluster_multicast_addr: "233.0.1.2" 
+      jgroups_stack: tcp
+      jgroups_members:
+        - addr: 192.168.56.202
+          port: 7900 
+        - addr: 192.168.56.203
+          port: 7900 
+        - addr: 192.168.56.203
+          port: 7900 

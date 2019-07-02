@@ -1,0 +1,51 @@
+---
+- name: Create '{{ item }}' for webserver directory
+  file:
+    path: "{{ item }}"
+    state: directory  
+    owner: "{{ username }}"
+    group: "{{ groupname }}"
+    mode: 0700
+  with_items:
+    - "{{ web_path }}/{{ selected_web.name }}" 
+    - "{{ log_path }}"  
+    - "{{ app_path }}" 
+ 
+- name: Exist check Web Engine
+  stat: 
+    path: "{{ selected_web.server_home }}"
+  register: web_exist 
+
+- name: "unArchive Packages" 
+  unarchive:
+    src: "{{ selected_web.package }}"
+    dest: "{{ web_path }}/{{ selected_web.name }}"  
+    owner: "{{ username }}"
+    group: "{{ groupname }}" 
+  when: web_product.find("jbcs") != -1 and web_exist.stat.exists == False
+
+- name: unArchive 'webserver' Patch Packages
+  unarchive:
+    src: "{{ item }}"
+    dest: "{{ web_path }}/{{ selected_web.name }}"
+    owner: "{{ username }}"
+    group: "{{ groupname }}"  
+  with_items:
+    - "{{ selected_web.patches }}"  
+  when: web_product.find("jbcs") != -1 and web_exist.stat.exists == False
+
+- name: Rename Apache Engine Directory
+  shell: |
+    mv {{ web_path }}/{{ selected_web.name }}/*/httpd/ {{ selected_web.server_home }}/
+    rm -rf {{ web_path }}/{{ selected_web.name }}
+    cd {{ selected_web.server_home }}/
+    exec ./.postinstall
+  when: web_product.find("jbcs") != -1 and web_exist.stat.exists == False 
+
+- name: Recursively change ownership of a directory
+  file:
+    path: "{{ web_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ username }}"
+    group: "{{ groupname }}"

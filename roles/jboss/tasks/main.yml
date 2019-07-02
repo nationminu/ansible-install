@@ -1,0 +1,7 @@
+--- 
+# tasks file for jboss 
+- include_tasks: jboss_install.yml
+  when: '"wasservers" in group_names' 
+
+- include_tasks: jboss_patch.yml
+  when: '"wasservers" in group_names'
