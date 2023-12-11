@@ -14,13 +14,12 @@
     CustomLog    "|{{ selected_web.server_home }}/sbin/rotatelogs {{ log_path }}/tatic.log.%Y%m%d 86400 +540" common env=static_log
     ErrorLog     "|{{ selected_web.server_home }}/sbin/rotatelogs {{ log_path }}/error.log.%Y%m%d 86400 +540"
 
-    JkMount /*.do	wlb
-    JkMount /*.jsp	wlb
-    JkMount /*.json	wlb
-    JkMount /*.servlet	wlb
-    JkMount /servlets/*	wlb
-    JkMount /session/*	wlb
-
+    JkMount /*.do	loadbalancer
+    JkMount /*.jsp	loadbalancer
+    JkMount /*.json	loadbalancer
+    JkMount /*.servlet	loadbalancer
+    JkMount /servlets/*	loadbalancer
+    JkMount /session/*	loadbalancer 
 </VirtualHost>
 
 <Directory "{{ app_path }}">
