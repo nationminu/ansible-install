@@ -5,7 +5,6 @@ worker.list=jkstatus,loadbalancer
 
 # configuration template #########
 ##################################
-worker.template.type=ajp1
 worker.template.lbfactor=1
 worker.template.type=ajp13
 worker.template.ping_mode=A
@@ -23,7 +22,6 @@ worker.{{ instance.server_name }}.port={{ (8009+instance.port_offset)|int }}
 #
 # configuration loadbalancer
 worker.loadbalancer.type=lb
-worker.loadbalancer.retries=1
 worker.loadbalancer.method=Session
 worker.loadbalancer.sticky_session=true
 worker.loadbalancer.balance_workers={% for group in groups.all  %}{% if hostvars[group].instances is defined %}{% for instance in hostvars[group].instances  %}{{ instance.server_name }},{% endfor %}{% endif %}{% endfor %} 
